@@ -1,7 +1,7 @@
 import os
 import yaml
 from pytest import approx
-from boids import initialise_boids, update_boids
+from boids import get_flock_parameters, initialise_boids, update_boids
 
 
 def test_bad_boids_regression():
@@ -9,12 +9,11 @@ def test_bad_boids_regression():
         regression_data = yaml.safe_load(fixture_file)
 
     boid_data = regression_data["before"]
+    boid_count = 50
+    flock_parameters = get_flock_parameters(boid_count)
     update_boids(
         boid_data,
-        flock_attraction=0.01,
-        avoidance_radius=10,
-        formation_flying_radius=100,
-        speed_matching_strength=0.125,
+        flock_parameters,
     )
     for after, before in zip(regression_data["after"], boid_data):
         for after_value, before_value in zip(after, before):

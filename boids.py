@@ -11,6 +11,15 @@ import random
 # Deliberately terrible code for teaching purposes
 
 
+def get_flock_parameters(boid_count):
+    return {
+        "flock_attraction": 0.01 / boid_count,
+        "avoidance_radius": 10,
+        "formation_flying_radius": 100,
+        "speed_matching_strength": 0.125 / boid_count,
+    }
+
+
 def initialise_boids(
     boid_count,
     x_range=(-450, 50.0),
@@ -25,15 +34,7 @@ def initialise_boids(
     return (boids_x, boids_y, boid_x_velocities, boid_y_velocities)
 
 
-def boid_interaction(
-    me,
-    other,
-    count,
-    flock_attraction,
-    avoidance_radius,
-    formation_flying_radius,
-    speed_matching_strength,
-):
+def boid_interaction(me, other, flock_parameters):
     my_x, my_y, my_xv, my_yv = me
     their_x, their_y, their_xv, their_yv = other
 
@@ -43,28 +44,22 @@ def boid_interaction(
     delta_xv = 0
     delta_yv = 0
     # Fly towards the middle
-    delta_xv += x_separation * flock_attraction / count
-    delta_yv += y_separation * flock_attraction / count
+    delta_xv += x_separation * flock_parameters["flock_attraction"]
+    delta_yv += y_separation * flock_parameters["flock_attraction"]
     # Fly away from nearby boids
     separation_sq = x_separation ** 2 + y_separation ** 2
-    if separation_sq < avoidance_radius ** 2:
+    if separation_sq < flock_parameters["avoidance_radius"] ** 2:
         delta_xv -= x_separation
         delta_yv -= y_separation
     # Try to match speed with nearby boids
-    if separation_sq < formation_flying_radius ** 2:
-        delta_xv += (their_xv - my_xv) * speed_matching_strength / count
-        delta_yv += (their_yv - my_yv) * speed_matching_strength / count
+    if separation_sq < flock_parameters["formation_flying_radius"] ** 2:
+        delta_xv += (their_xv - my_xv) * flock_parameters["speed_matching_strength"]
+        delta_yv += (their_yv - my_yv) * flock_parameters["speed_matching_strength"]
 
     return delta_xv, delta_yv
 
 
-def update_boids(
-    boids,
-    flock_attraction=0.01,
-    avoidance_radius=10,
-    formation_flying_radius=100,
-    speed_matching_strength=0.125,
-):
+def update_boids(boids, flock_parameters):
     xs, ys, xvs, yvs = boids
 
     # Compute boid velocity updates
@@ -74,15 +69,7 @@ def update_boids(
         me = (xs[i], ys[i], xvs[i], yvs[i])
         for j in range(len(xs)):
             other = (xs[j], ys[j], xvs[j], yvs[j])
-            dxv, dyv = boid_interaction(
-                me,
-                other,
-                len(xs),
-                flock_attraction,
-                avoidance_radius,
-                formation_flying_radius,
-                speed_matching_strength,
-            )
+            dxv, dyv = boid_interaction(me, other, flock_parameters)
             delta_xvs[i] += dxv
             delta_yvs[i] += dyv
 
@@ -96,18 +83,22 @@ def update_boids(
         ys[i] += yvs[i]
 
 
-boids = initialise_boids(50)
+boid_count = 50
+flock_parameters = get_flock_parameters(boid_count)
+boids = initialise_boids(boid_count)
 figure = plt.figure()
 axes = plt.axes(xlim=(-500, 1500), ylim=(-500, 1500))
 scatter = axes.scatter(boids[0], boids[1])
 
 
-def animate(frame):
-    update_boids(boids)
+def animate(frame, flock_parameters):
+    update_boids(boids, flock_parameters)
     scatter.set_offsets(list(zip(boids[0], boids[1])))
 
 
-anim = animation.FuncAnimation(figure, animate, frames=50, interval=50)
+anim = animation.FuncAnimation(
+    figure, animate, frames=50, interval=50, fargs=(flock_parameters,)
+)
 
 if __name__ == "__main__":
     plt.show()
