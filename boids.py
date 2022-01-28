@@ -1,12 +1,12 @@
 """
-A deliberately bad implementation of [Boids](http://dl.acm.org/citation.cfm?doid=37401.37406)
-for use as an exercise on refactoring.
+A deliberately bad implementation of Boids[1] for use as an exercise on refactoring.
+
+[1] http://dl.acm.org/citation.cfm?doid=37401.37406
 """
 
 from matplotlib import pyplot as plt
 from matplotlib import animation
 import random
-import yaml
 
 # Deliberately terrible code for teaching purposes
 
