@@ -8,6 +8,14 @@ import random
 # Deliberately terrible code for teaching purposes
 
 
+class Boid:
+    def __init__(self, x, y, xv, yv):
+        self.x = x
+        self.y = y
+        self.xv = xv
+        self.yv = yv
+
+
 class Boids:
     def __init__(self, parameters):
         self.parameters = parameters
@@ -30,20 +38,22 @@ class Boids:
         xv_range=(0, 10.0),
         yv_range=(-20.0, 20.0),
     ):
-        self.xs = [random.uniform(*x_range) for _ in range(boid_count)]
-        self.ys = [random.uniform(*y_range) for _ in range(boid_count)]
-        self.xvs = [random.uniform(*xv_range) for _ in range(boid_count)]
-        self.yvs = [random.uniform(*yv_range) for _ in range(boid_count)]
+        self.boids = [
+            Boid(
+                random.uniform(*x_range),
+                random.uniform(*y_range),
+                random.uniform(*xv_range),
+                random.uniform(*yv_range),
+            )
+            for _ in range(boid_count)
+        ]
 
     def initialise_from_data(self, data):
-        self.xs, self.ys, self.xvs, self.yvs = data
+        self.boids = [Boid(x, y, xv, yv) for x, y, xv, yv in zip(*data)]
 
     def boid_interaction(self, me, other):
-        my_x, my_y, my_xv, my_yv = me
-        their_x, their_y, their_xv, their_yv = other
-
-        x_separation = their_x - my_x
-        y_separation = their_y - my_y
+        x_separation = other.x - me.x
+        y_separation = other.y - me.y
 
         delta_xv = 0
         delta_yv = 0
@@ -57,28 +67,26 @@ class Boids:
             delta_yv -= y_separation
         # Try to match speed with nearby boids
         if separation_sq < self.parameters["formation_flying_radius"] ** 2:
-            delta_xv += (their_xv - my_xv) * self.parameters["speed_matching_strength"]
-            delta_yv += (their_yv - my_yv) * self.parameters["speed_matching_strength"]
+            delta_xv += (other.xv - me.xv) * self.parameters["speed_matching_strength"]
+            delta_yv += (other.yv - me.yv) * self.parameters["speed_matching_strength"]
 
         return delta_xv, delta_yv
 
     def update(self):
         # Compute boid velocity updates
-        delta_xvs = [0] * len(self.xs)
-        delta_yvs = [0] * len(self.xs)
-        for i in range(len(self.xs)):
-            me = (self.xs[i], self.ys[i], self.xvs[i], self.yvs[i])
-            for j in range(len(self.xs)):
-                other = (self.xs[j], self.ys[j], self.xvs[j], self.yvs[j])
+        delta_xvs = [0] * len(self.boids)
+        delta_yvs = [0] * len(self.boids)
+        for i, me in enumerate(self.boids):
+            for other in self.boids:
                 dxv, dyv = self.boid_interaction(me, other)
                 delta_xvs[i] += dxv
                 delta_yvs[i] += dyv
 
         # Apply updates
-        for i in range(len(self.xs)):
+        for i, me in enumerate(self.boids):
             # Update velocities
-            self.xvs[i] += delta_xvs[i]
-            self.yvs[i] += delta_yvs[i]
+            me.xv += delta_xvs[i]
+            me.yv += delta_yvs[i]
             # Move according to velocities
-            self.xs[i] += self.xvs[i]
-            self.ys[i] += self.yvs[i]
+            me.x += me.xv
+            me.y += me.yv

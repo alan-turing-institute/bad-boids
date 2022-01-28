@@ -11,10 +11,11 @@ def test_bad_boids_regression():
     boids = Boids.with_default_parameters(boid_count)
     boids.initialise_from_data(regression_data["before"])
     boids.update()
-    current_data = (boids.xs, boids.ys, boids.xvs, boids.yvs)
-    for after, before in zip(regression_data["after"], current_data):
-        for after_value, before_value in zip(after, before):
-            assert after_value == approx(before_value)
+    for index, boid in enumerate(boids.boids):
+        assert boid.x == approx(regression_data["after"][0][index])
+        assert boid.y == approx(regression_data["after"][1][index])
+        assert boid.xv == approx(regression_data["after"][2][index])
+        assert boid.yv == approx(regression_data["after"][3][index])
 
 
 def test_bad_boids_initialisation():
@@ -31,16 +32,14 @@ def test_bad_boids_initialisation():
         xv_range=xv_range,
         yv_range=yv_range,
     )
-    assert len(boids.xs) == boid_count
-    for x in boids.xs:
-        assert x < x_range[1]
-        assert x > x_range[0]
-    for y in boids.ys:
-        assert y < y_range[1]
-        assert y > y_range[0]
-    for xv in boids.xvs:
-        assert xv < xv_range[1]
-        assert xv > xv_range[0]
-    for yv in boids.yvs:
-        assert yv < yv_range[1]
-        assert yv > yv_range[0]
+
+    assert len(boids.boids) == boid_count
+    for boid in boids.boids:
+        assert boid.x < x_range[1]
+        assert boid.x > x_range[0]
+        assert boid.y < y_range[1]
+        assert boid.y > y_range[0]
+        assert boid.xv < xv_range[1]
+        assert boid.xv > xv_range[0]
+        assert boid.yv < yv_range[1]
+        assert boid.yv > yv_range[0]
