@@ -70,3 +70,16 @@ def test_boid_interaction_avoidance():
     first = Boid(0, 0, 1, 0, boids)
     second = Boid(0, 5, 0, 0, boids)
     assert first.interaction(second) == (0.0, 10.0)
+
+
+def test_boid_interaction_formation():
+    parameters = {
+        "flock_attraction": 3,
+        "avoidance_radius": 2,
+        "formation_flying_radius": 10,
+        "speed_matching_strength": 7,
+    }
+    boids = Boids(parameters)
+    first = Boid(0, 0, 0.0, 0, boids)
+    second = Boid(0, 5, 11.0, 0, boids)
+    assert first.interaction(second) == (11.0 * 7.0, 15.0)
