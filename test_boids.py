@@ -1,6 +1,7 @@
 import os
 import yaml
 from pytest import approx
+from numpy.testing import assert_array_equal
 from boids import Boid, Boids
 
 
@@ -12,10 +13,10 @@ def test_bad_boids_regression():
     boids.initialise_from_data(regression_data["before"])
     boids.update()
     for index, boid in enumerate(boids.boids):
-        assert boid.x == approx(regression_data["after"][0][index])
-        assert boid.y == approx(regression_data["after"][1][index])
-        assert boid.xv == approx(regression_data["after"][2][index])
-        assert boid.yv == approx(regression_data["after"][3][index])
+        assert boid.position[0] == approx(regression_data["after"][0][index])
+        assert boid.position[1] == approx(regression_data["after"][1][index])
+        assert boid.velocity[0] == approx(regression_data["after"][2][index])
+        assert boid.velocity[1] == approx(regression_data["after"][3][index])
 
 
 def test_bad_boids_initialisation():
@@ -36,14 +37,14 @@ def test_bad_boids_initialisation():
     assert len(boids.boids) == boid_count
     assert boids.boid_count == boid_count
     for boid in boids.boids:
-        assert boid.x < x_range[1]
-        assert boid.x > x_range[0]
-        assert boid.y < y_range[1]
-        assert boid.y > y_range[0]
-        assert boid.xv < xv_range[1]
-        assert boid.xv > xv_range[0]
-        assert boid.yv < yv_range[1]
-        assert boid.yv > yv_range[0]
+        assert boid.position[0] < x_range[1]
+        assert boid.position[0] > x_range[0]
+        assert boid.position[1] < y_range[1]
+        assert boid.position[1] > y_range[0]
+        assert boid.velocity[0] < xv_range[1]
+        assert boid.velocity[0] > xv_range[0]
+        assert boid.velocity[1] < yv_range[1]
+        assert boid.velocity[1] > yv_range[0]
 
 
 def test_boid_interaction_fly_to_middle():
@@ -56,7 +57,7 @@ def test_boid_interaction_fly_to_middle():
     boids = Boids(parameters)
     first = Boid(0, 0, 1, 0, boids)
     second = Boid(0, 5, 0, 0, boids)
-    assert first.interaction(second) == (0.0, 15.0)
+    assert_array_equal(first.interaction(second), [0.0, 15.0])
 
 
 def test_boid_interaction_avoidance():
@@ -69,7 +70,7 @@ def test_boid_interaction_avoidance():
     boids = Boids(parameters)
     first = Boid(0, 0, 1, 0, boids)
     second = Boid(0, 5, 0, 0, boids)
-    assert first.interaction(second) == (0.0, 10.0)
+    assert_array_equal(first.interaction(second), [0.0, 10.0])
 
 
 def test_boid_interaction_formation():
@@ -82,4 +83,4 @@ def test_boid_interaction_formation():
     boids = Boids(parameters)
     first = Boid(0, 0, 0.0, 0, boids)
     second = Boid(0, 5, 11.0, 0, boids)
-    assert first.interaction(second) == (11.0 * 7.0, 15.0)
+    assert_array_equal(first.interaction(second), [11.0 * 7.0, 15.0])

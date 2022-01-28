@@ -4,44 +4,38 @@ A deliberately bad implementation of Boids[1] for use as an exercise on refactor
 [1] http://dl.acm.org/citation.cfm?doid=37401.37406
 """
 import random
+import numpy as np
 
 # Deliberately terrible code for teaching purposes
 
 
 class Boid:
     def __init__(self, x, y, xv, yv, owner):
-        self.x = x
-        self.y = y
-        self.xv = xv
-        self.yv = yv
+        self.position = np.array([x, y])
+        self.velocity = np.array([xv, yv])
         self.owner = owner
 
     def interaction(self, other):
-        delta_xv = 0
-        delta_yv = 0
-        x_separation = other.x - self.x
-        y_separation = other.y - self.y
-        separation_sq = x_separation ** 2 + y_separation ** 2
+        delta_v = np.array([0.0, 0.0])
+        separation = other.position - self.position
+        separation_sq = separation.dot(separation)
 
         # Fly towards the middle
-        flock_atraction = self.owner.parameters["flock_attraction"]
-        delta_xv += x_separation * flock_atraction
-        delta_yv += y_separation * flock_atraction
+        flock_attraction = self.owner.parameters["flock_attraction"]
+        delta_v += separation * flock_attraction
 
         # Fly away from nearby boids
         avoidance_radius = self.owner.parameters["avoidance_radius"]
         if separation_sq < avoidance_radius ** 2:
-            delta_xv -= x_separation
-            delta_yv -= y_separation
+            delta_v -= separation
 
         # Try to match speed with nearby boids
         formation_flying_radius = self.owner.parameters["formation_flying_radius"]
         speed_matching_strength = self.owner.parameters["speed_matching_strength"]
         if separation_sq < formation_flying_radius ** 2:
-            delta_xv += (other.xv - self.xv) * speed_matching_strength
-            delta_yv += (other.yv - self.yv) * speed_matching_strength
+            delta_v += (other.velocity - self.velocity) * speed_matching_strength
 
-        return delta_xv, delta_yv
+        return delta_v
 
 
 class Boids:
@@ -87,19 +81,14 @@ class Boids:
 
     def update(self):
         # Compute boid velocity updates
-        delta_xvs = [0] * self.boid_count
-        delta_yvs = [0] * self.boid_count
+        delta_vs = np.zeros((self.boid_count, 2))
         for i, me in enumerate(self.boids):
             for other in self.boids:
-                dxv, dyv = me.interaction(other)
-                delta_xvs[i] += dxv
-                delta_yvs[i] += dyv
+                delta_vs[i, :] += me.interaction(other)
 
         # Apply updates
         for i, me in enumerate(self.boids):
             # Update velocities
-            me.xv += delta_xvs[i]
-            me.yv += delta_yvs[i]
+            me.velocity += delta_vs[i, :]
             # Move according to velocities
-            me.x += me.xv
-            me.y += me.yv
+            me.position += me.velocity

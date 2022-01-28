@@ -7,12 +7,14 @@ boids = Boids.with_default_parameters(boid_count)
 boids.initialise_random(boid_count)
 figure = plt.figure()
 axes = plt.axes(xlim=(-500, 1500), ylim=(-500, 1500))
-scatter = axes.scatter([b.x for b in boids.boids], [b.y for b in boids.boids])
+scatter = axes.scatter(
+    [b.position[0] for b in boids.boids], [b.position[1] for b in boids.boids]
+)
 
 
 def animate(frame):
     boids.update()
-    scatter.set_offsets([(b.x, b.y) for b in boids.boids])
+    scatter.set_offsets([b.position for b in boids.boids])
 
 
 anim = animation.FuncAnimation(figure, animate, frames=50, interval=50)
