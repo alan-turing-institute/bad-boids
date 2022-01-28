@@ -25,6 +25,39 @@ def initialise_boids(
     return (boids_x, boids_y, boid_x_velocities, boid_y_velocities)
 
 
+def boid_interaction(
+    me,
+    other,
+    count,
+    flock_attraction,
+    avoidance_radius,
+    formation_flying_radius,
+    speed_matching_strength,
+):
+    my_x, my_y, my_xv, my_yv = me
+    their_x, their_y, their_xv, their_yv = other
+
+    x_separation = their_x - my_x
+    y_separation = their_y - my_y
+
+    delta_xv = 0
+    delta_yv = 0
+    # Fly towards the middle
+    delta_xv += x_separation * flock_attraction / count
+    delta_yv += y_separation * flock_attraction / count
+    # Fly away from nearby boids
+    separation_sq = x_separation ** 2 + y_separation ** 2
+    if separation_sq < avoidance_radius ** 2:
+        delta_xv -= x_separation
+        delta_yv -= y_separation
+    # Try to match speed with nearby boids
+    if separation_sq < formation_flying_radius ** 2:
+        delta_xv += (their_xv - my_xv) * speed_matching_strength / count
+        delta_yv += (their_yv - my_yv) * speed_matching_strength / count
+
+    return delta_xv, delta_yv
+
+
 def update_boids(
     boids,
     flock_attraction=0.01,
@@ -38,21 +71,20 @@ def update_boids(
     delta_xvs = [0] * len(xs)
     delta_yvs = [0] * len(xs)
     for i in range(len(xs)):
+        me = (xs[i], ys[i], xvs[i], yvs[i])
         for j in range(len(xs)):
-            x_separation = xs[j] - xs[i]
-            y_separation = ys[j] - ys[i]
-            # Fly towards the middle
-            delta_xvs[i] += x_separation * flock_attraction / len(xs)
-            delta_yvs[i] += y_separation * flock_attraction / len(xs)
-            # Fly away from nearby boids
-            separation_sq = x_separation ** 2 + y_separation ** 2
-            if separation_sq < avoidance_radius ** 2:
-                delta_xvs[i] -= x_separation
-                delta_yvs[i] -= y_separation
-            # Try to match speed with nearby boids
-            if separation_sq < formation_flying_radius ** 2:
-                delta_xvs[i] += (xvs[j] - xvs[i]) * speed_matching_strength / len(xs)
-                delta_yvs[i] += (yvs[j] - yvs[i]) * speed_matching_strength / len(xs)
+            other = (xs[j], ys[j], xvs[j], yvs[j])
+            dxv, dyv = boid_interaction(
+                me,
+                other,
+                len(xs),
+                flock_attraction,
+                avoidance_radius,
+                formation_flying_radius,
+                speed_matching_strength,
+            )
+            delta_xvs[i] += dxv
+            delta_yvs[i] += dyv
 
     # Apply updates
     for i in range(len(xs)):
