@@ -1,7 +1,7 @@
 import os
 import yaml
 from pytest import approx
-from boids import Boids
+from boids import Boid, Boids
 
 
 def test_bad_boids_regression():
@@ -44,3 +44,16 @@ def test_bad_boids_initialisation():
         assert boid.xv > xv_range[0]
         assert boid.yv < yv_range[1]
         assert boid.yv > yv_range[0]
+
+
+def test_boid_interaction_fly_to_middle():
+    parameters = {
+        "flock_attraction": 3,
+        "avoidance_radius": 2,
+        "formation_flying_radius": 10,
+        "speed_matching_strength": 0,
+    }
+    boids = Boids(parameters)
+    first = Boid(0, 0, 1, 0, boids)
+    second = Boid(0, 5, 0, 0, boids)
+    assert first.interaction(second) == (0.0, 15.0)

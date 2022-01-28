@@ -16,7 +16,7 @@ class Boid:
         self.yv = yv
         self.owner = owner
 
-    def boid_interaction(self, other):
+    def interaction(self, other):
         delta_xv = 0
         delta_yv = 0
         x_separation = other.x - self.x
@@ -91,7 +91,7 @@ class Boids:
         delta_yvs = [0] * self.boid_count
         for i, me in enumerate(self.boids):
             for other in self.boids:
-                dxv, dyv = me.boid_interaction(other)
+                dxv, dyv = me.interaction(other)
                 delta_xvs[i] += dxv
                 delta_yvs[i] += dyv
 
