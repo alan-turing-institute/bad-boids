@@ -18,10 +18,10 @@ def initialise_boids(
     xv_range=(0, 10.0),
     yv_range=(-20.0, 20.0),
 ):
-    boids_x = [random.uniform(*x_range) for x in range(boid_count)]
-    boids_y = [random.uniform(*y_range) for x in range(boid_count)]
-    boid_x_velocities = [random.uniform(*xv_range) for x in range(boid_count)]
-    boid_y_velocities = [random.uniform(*yv_range) for x in range(boid_count)]
+    boids_x = [random.uniform(*x_range) for _ in range(boid_count)]
+    boids_y = [random.uniform(*y_range) for _ in range(boid_count)]
+    boid_x_velocities = [random.uniform(*xv_range) for _ in range(boid_count)]
+    boid_y_velocities = [random.uniform(*yv_range) for _ in range(boid_count)]
     return (boids_x, boids_y, boid_x_velocities, boid_y_velocities)
 
 
