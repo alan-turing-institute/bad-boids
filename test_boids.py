@@ -16,17 +16,28 @@ def test_bad_boids_regression():
 
 
 def test_bad_boids_initialisation():
-    xs, ys, xvs, yvs = initialise_boids()
-    assert len(xs) == 50
+    boid_count = 50
+    x_range = (-450, 50.0)
+    y_range = (300.0, 600.0)
+    xv_range = (0, 10.0)
+    yv_range = (-20.0, 20.0)
+    xs, ys, xvs, yvs = initialise_boids(
+        boid_count,
+        x_range=x_range,
+        y_range=y_range,
+        xv_range=xv_range,
+        yv_range=yv_range,
+    )
+    assert len(xs) == boid_count
     for x in xs:
-        assert x < 50.0
-        assert x > -450
+        assert x < x_range[1]
+        assert x > x_range[0]
     for y in ys:
-        assert y < 600
-        assert y > 300
+        assert y < y_range[1]
+        assert y > y_range[0]
     for xv in xvs:
-        assert xv < 10.0
-        assert xv > 0
+        assert xv < xv_range[1]
+        assert xv > xv_range[0]
     for yv in yvs:
-        assert yv < 20.0
-        assert yv > -20.0
+        assert yv < yv_range[1]
+        assert yv > yv_range[0]
