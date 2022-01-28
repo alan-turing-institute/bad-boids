@@ -57,3 +57,16 @@ def test_boid_interaction_fly_to_middle():
     first = Boid(0, 0, 1, 0, boids)
     second = Boid(0, 5, 0, 0, boids)
     assert first.interaction(second) == (0.0, 15.0)
+
+
+def test_boid_interaction_avoidance():
+    parameters = {
+        "flock_attraction": 3,
+        "avoidance_radius": 10,
+        "formation_flying_radius": 10,
+        "speed_matching_strength": 0,
+    }
+    boids = Boids(parameters)
+    first = Boid(0, 0, 1, 0, boids)
+    second = Boid(0, 5, 0, 0, boids)
+    assert first.interaction(second) == (0.0, 10.0)
