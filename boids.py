@@ -10,11 +10,13 @@ import random
 
 # Deliberately terrible code for teaching purposes
 
-boids_x = [random.uniform(-450, 50.0) for x in range(50)]
-boids_y = [random.uniform(300.0, 600.0) for x in range(50)]
-boid_x_velocities = [random.uniform(0, 10.0) for x in range(50)]
-boid_y_velocities = [random.uniform(-20.0, 20.0) for x in range(50)]
-boids = (boids_x, boids_y, boid_x_velocities, boid_y_velocities)
+
+def initialise_boids():
+    boids_x = [random.uniform(-450, 50.0) for x in range(50)]
+    boids_y = [random.uniform(300.0, 600.0) for x in range(50)]
+    boid_x_velocities = [random.uniform(0, 10.0) for x in range(50)]
+    boid_y_velocities = [random.uniform(-20.0, 20.0) for x in range(50)]
+    return (boids_x, boids_y, boid_x_velocities, boid_y_velocities)
 
 
 def update_boids(boids):
@@ -47,6 +49,7 @@ def update_boids(boids):
         ys[i] = ys[i] + yvs[i]
 
 
+boids = initialise_boids()
 figure = plt.figure()
 axes = plt.axes(xlim=(-500, 1500), ylim=(-500, 1500))
 scatter = axes.scatter(boids[0], boids[1])
