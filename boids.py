@@ -46,8 +46,8 @@ def update_boids(
             delta_yvs[i] += y_separation * flock_attraction / len(xs)
             # Fly away from nearby boids
             if x_separation ** 2 + y_separation ** 2 < avoidance_radius ** 2:
-                delta_xvs[i] += xs[i] - xs[j]
-                delta_yvs[i] += ys[i] - ys[j]
+                delta_xvs[i] -= x_separation
+                delta_yvs[i] -= y_separation
             # Try to match speed with nearby boids
             if x_separation ** 2 + y_separation ** 2 < formation_flying_radius ** 2:
                 delta_xvs[i] += (xvs[j] - xvs[i]) * speed_matching_strength / len(xs)
