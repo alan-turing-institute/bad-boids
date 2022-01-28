@@ -19,6 +19,7 @@ class Boid:
 class Boids:
     def __init__(self, parameters):
         self.parameters = parameters
+        self.boids = []
 
     @classmethod
     def with_default_parameters(cls, boid_count):
@@ -29,6 +30,10 @@ class Boids:
             "speed_matching_strength": 0.125 / boid_count,
         }
         return cls(parameters)
+
+    @property
+    def boid_count(self):
+        return len(self.boids)
 
     def initialise_random(
         self,
@@ -74,8 +79,8 @@ class Boids:
 
     def update(self):
         # Compute boid velocity updates
-        delta_xvs = [0] * len(self.boids)
-        delta_yvs = [0] * len(self.boids)
+        delta_xvs = [0] * self.boid_count
+        delta_yvs = [0] * self.boid_count
         for i, me in enumerate(self.boids):
             for other in self.boids:
                 dxv, dyv = self.boid_interaction(me, other)

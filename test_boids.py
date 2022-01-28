@@ -34,6 +34,7 @@ def test_bad_boids_initialisation():
     )
 
     assert len(boids.boids) == boid_count
+    assert boids.boid_count == boid_count
     for boid in boids.boids:
         assert boid.x < x_range[1]
         assert boid.x > x_range[0]
