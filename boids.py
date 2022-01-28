@@ -19,33 +19,30 @@ boids = (boids_x, boids_y, boid_x_velocities, boid_y_velocities)
 
 def update_boids(boids):
     xs, ys, xvs, yvs = boids
+
+    # Compute boid velocity updates
     delta_xvs = [0] * len(xs)
     delta_yvs = [0] * len(xs)
-    # Fly towards the middle
     for i in range(len(xs)):
         for j in range(len(xs)):
+            # Fly towards the middle
             delta_xvs[i] = delta_xvs[i] + (xs[j] - xs[i]) * 0.01 / len(xs)
-    for i in range(len(xs)):
-        for j in range(len(xs)):
             delta_yvs[i] = delta_yvs[i] + (ys[j] - ys[i]) * 0.01 / len(xs)
-    # Fly away from nearby boids
-    for i in range(len(xs)):
-        for j in range(len(xs)):
+            # Fly away from nearby boids
             if (xs[j] - xs[i]) ** 2 + (ys[j] - ys[i]) ** 2 < 100:
                 delta_xvs[i] = delta_xvs[i] + (xs[i] - xs[j])
                 delta_yvs[i] = delta_yvs[i] + (ys[i] - ys[j])
-    # Try to match speed with nearby boids
-    for i in range(len(xs)):
-        for j in range(len(xs)):
+            # Try to match speed with nearby boids
             if (xs[j] - xs[i]) ** 2 + (ys[j] - ys[i]) ** 2 < 10000:
                 delta_xvs[i] = delta_xvs[i] + (xvs[j] - xvs[i]) * 0.125 / len(xs)
                 delta_yvs[i] = delta_yvs[i] + (yvs[j] - yvs[i]) * 0.125 / len(xs)
-    # Update velocities
+
+    # Apply updates
     for i in range(len(xs)):
+        # Update velocities
         xvs[i] = xvs[i] + delta_xvs[i]
         yvs[i] = yvs[i] + delta_yvs[i]
-    # Move according to velocities
-    for i in range(len(xs)):
+        # Move according to velocities
         xs[i] = xs[i] + xvs[i]
         ys[i] = ys[i] + yvs[i]
 
