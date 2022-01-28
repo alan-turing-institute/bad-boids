@@ -28,8 +28,8 @@ class Boid:
         self.velocity = np.array([xv, yv])
         self.owner = owner
 
-    def interaction(self, other):
-        """Compute the forces on this Boid due to another Boid.
+    def interaction_single(self, other):
+        """Compute the forces on this Boid due to one other Boid.
 
         Parameters
         ----------
@@ -61,7 +61,20 @@ class Boid:
             delta_v += (other.velocity - self.velocity) * speed_matching_strength
 
         return delta_v
-    
+
+    def interaction_flock(self):
+        """Compute the forces on this Boid due to the whole flock of Boids.
+
+        Returns
+        -------
+        np.array
+            Overall velocity change this Boid will experience in the next update.
+        """
+        delta_v = np.array([0.0, 0.0])
+        for other in self.owner.boids:
+            delta_v += self.interaction_single(other)
+        return delta_v
+
     def move(self, delta_v):
         """Update the position and velocity of the Boid
 
@@ -167,13 +180,11 @@ class Boids:
         self.boids = [Boid(x, y, xv, yv, self) for x, y, xv, yv in zip(*data)]
 
     def update(self):
-        """Update the velocities and positions of all the Boid in the flock
-        """
+        """Update the velocities and positions of all the Boid in the flock"""
         # Compute boid velocity updates
         delta_vs = np.zeros((self.boid_count, 2))
         for i, me in enumerate(self.boids):
-            for other in self.boids:
-                delta_vs[i, :] += me.interaction(other)
+            delta_vs[i, :] += me.interaction_flock()
 
         # Apply updates
         for i, me in enumerate(self.boids):
