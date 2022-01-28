@@ -14,6 +14,7 @@ def test_bad_boids_regression():
         flock_attraction=0.01,
         avoidance_radius=10,
         formation_flying_radius=100,
+        speed_matching_strength=0.125,
     )
     for after, before in zip(regression_data["after"], boid_data):
         for after_value, before_value in zip(after, before):

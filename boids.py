@@ -26,7 +26,11 @@ def initialise_boids(
 
 
 def update_boids(
-    boids, flock_attraction=0.01, avoidance_radius=10, formation_flying_radius=100
+    boids,
+    flock_attraction=0.01,
+    avoidance_radius=10,
+    formation_flying_radius=100,
+    speed_matching_strength=0.125,
 ):
     xs, ys, xvs, yvs = boids
 
@@ -46,8 +50,12 @@ def update_boids(
                 delta_yvs[i] = delta_yvs[i] + (ys[i] - ys[j])
             # Try to match speed with nearby boids
             if x_separation ** 2 + y_separation ** 2 < formation_flying_radius ** 2:
-                delta_xvs[i] = delta_xvs[i] + (xvs[j] - xvs[i]) * 0.125 / len(xs)
-                delta_yvs[i] = delta_yvs[i] + (yvs[j] - yvs[i]) * 0.125 / len(xs)
+                delta_xvs[i] = delta_xvs[i] + (
+                    xvs[j] - xvs[i]
+                ) * speed_matching_strength / len(xs)
+                delta_yvs[i] = delta_yvs[i] + (
+                    yvs[j] - yvs[i]
+                ) * speed_matching_strength / len(xs)
 
     # Apply updates
     for i in range(len(xs)):
