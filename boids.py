@@ -9,11 +9,39 @@ import random
 
 
 class Boid:
-    def __init__(self, x, y, xv, yv):
+    def __init__(self, x, y, xv, yv, owner):
         self.x = x
         self.y = y
         self.xv = xv
         self.yv = yv
+        self.owner = owner
+
+    def boid_interaction(self, other):
+        delta_xv = 0
+        delta_yv = 0
+        x_separation = other.x - self.x
+        y_separation = other.y - self.y
+        separation_sq = x_separation ** 2 + y_separation ** 2
+
+        # Fly towards the middle
+        flock_atraction = self.owner.parameters["flock_attraction"]
+        delta_xv += x_separation * flock_atraction
+        delta_yv += y_separation * flock_atraction
+
+        # Fly away from nearby boids
+        avoidance_radius = self.owner.parameters["avoidance_radius"]
+        if separation_sq < avoidance_radius ** 2:
+            delta_xv -= x_separation
+            delta_yv -= y_separation
+
+        # Try to match speed with nearby boids
+        formation_flying_radius = self.owner.parameters["formation_flying_radius"]
+        speed_matching_strength = self.owner.parameters["speed_matching_strength"]
+        if separation_sq < formation_flying_radius ** 2:
+            delta_xv += (other.xv - self.xv) * speed_matching_strength
+            delta_yv += (other.yv - self.yv) * speed_matching_strength
+
+        return delta_xv, delta_yv
 
 
 class Boids:
@@ -49,33 +77,13 @@ class Boids:
                 random.uniform(*y_range),
                 random.uniform(*xv_range),
                 random.uniform(*yv_range),
+                self,
             )
             for _ in range(boid_count)
         ]
 
     def initialise_from_data(self, data):
-        self.boids = [Boid(x, y, xv, yv) for x, y, xv, yv in zip(*data)]
-
-    def boid_interaction(self, me, other):
-        x_separation = other.x - me.x
-        y_separation = other.y - me.y
-
-        delta_xv = 0
-        delta_yv = 0
-        # Fly towards the middle
-        delta_xv += x_separation * self.parameters["flock_attraction"]
-        delta_yv += y_separation * self.parameters["flock_attraction"]
-        # Fly away from nearby boids
-        separation_sq = x_separation ** 2 + y_separation ** 2
-        if separation_sq < self.parameters["avoidance_radius"] ** 2:
-            delta_xv -= x_separation
-            delta_yv -= y_separation
-        # Try to match speed with nearby boids
-        if separation_sq < self.parameters["formation_flying_radius"] ** 2:
-            delta_xv += (other.xv - me.xv) * self.parameters["speed_matching_strength"]
-            delta_yv += (other.yv - me.yv) * self.parameters["speed_matching_strength"]
-
-        return delta_xv, delta_yv
+        self.boids = [Boid(x, y, xv, yv, self) for x, y, xv, yv in zip(*data)]
 
     def update(self):
         # Compute boid velocity updates
@@ -83,7 +91,7 @@ class Boids:
         delta_yvs = [0] * self.boid_count
         for i, me in enumerate(self.boids):
             for other in self.boids:
-                dxv, dyv = self.boid_interaction(me, other)
+                dxv, dyv = me.boid_interaction(other)
                 delta_xvs[i] += dxv
                 delta_yvs[i] += dyv
 
