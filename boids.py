@@ -25,7 +25,7 @@ def initialise_boids(
     return (boids_x, boids_y, boid_x_velocities, boid_y_velocities)
 
 
-def update_boids(boids):
+def update_boids(boids, flock_attraction=0.01):
     xs, ys, xvs, yvs = boids
 
     # Compute boid velocity updates
@@ -34,8 +34,8 @@ def update_boids(boids):
     for i in range(len(xs)):
         for j in range(len(xs)):
             # Fly towards the middle
-            delta_xvs[i] = delta_xvs[i] + (xs[j] - xs[i]) * 0.01 / len(xs)
-            delta_yvs[i] = delta_yvs[i] + (ys[j] - ys[i]) * 0.01 / len(xs)
+            delta_xvs[i] = delta_xvs[i] + (xs[j] - xs[i]) * flock_attraction / len(xs)
+            delta_yvs[i] = delta_yvs[i] + (ys[j] - ys[i]) * flock_attraction / len(xs)
             # Fly away from nearby boids
             if (xs[j] - xs[i]) ** 2 + (ys[j] - ys[i]) ** 2 < 100:
                 delta_xvs[i] = delta_xvs[i] + (xs[i] - xs[j])

@@ -9,7 +9,7 @@ def test_bad_boids_regression():
         regression_data = yaml.safe_load(fixture_file)
 
     boid_data = regression_data["before"]
-    update_boids(boid_data)
+    update_boids(boid_data, flock_attraction=0.01)
     for after, before in zip(regression_data["after"], boid_data):
         for after_value, before_value in zip(after, before):
             assert after_value == approx(before_value)
