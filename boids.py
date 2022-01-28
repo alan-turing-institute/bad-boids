@@ -1,21 +1,46 @@
 """
-A deliberately bad implementation of Boids[1] for use as an exercise on refactoring.
+An improved implementation of Boids[1] for use as an exercise on refactoring.
 
 [1] http://dl.acm.org/citation.cfm?doid=37401.37406
 """
 import random
 import numpy as np
 
-# Deliberately terrible code for teaching purposes
-
 
 class Boid:
     def __init__(self, x, y, xv, yv, owner):
+        """Create a single Boid.
+
+        Parameters
+        ----------
+        x : float
+            Initial x position
+        y : float
+            Initial y position
+        xv : float
+            Initial x velocity
+        yv : float
+            Initial y velocity
+        owner : Boids
+            The flock of Boids this Boid belongs to
+        """
         self.position = np.array([x, y])
         self.velocity = np.array([xv, yv])
         self.owner = owner
 
     def interaction(self, other):
+        """Compute the forces on this Boid due to another Boid.
+
+        Parameters
+        ----------
+        other : Boid
+            Another Boid
+
+        Returns
+        -------
+        np.array
+            Velocity change caused by the other Boid
+        """
         delta_v = np.array([0.0, 0.0])
         separation = other.position - self.position
         separation_sq = separation.dot(separation)
@@ -40,11 +65,32 @@ class Boid:
 
 class Boids:
     def __init__(self, parameters):
+        """Create an empty flock of Boids.
+
+        Parameters
+        ----------
+        parameters : dict
+            Parameters controlling the flock behaviour. Must include the keys
+            'flock_attraction', 'avoidance_radius', 'formation_flying_radius',
+            and 'speed_matching_strength'
+        """
         self.parameters = parameters
         self.boids = []
 
     @classmethod
     def with_default_parameters(cls, boid_count):
+        """Create an empty flock of Boids with default parameters for a given flock size
+
+        Parameters
+        ----------
+        boid_count : int
+            The number of Boids in the flock to compute parameters for.
+
+        Returns
+        -------
+        Boids
+            An empty flock of Boids
+        """
         parameters = {
             "flock_attraction": 0.01 / boid_count,
             "avoidance_radius": 10,
@@ -55,6 +101,13 @@ class Boids:
 
     @property
     def boid_count(self):
+        """Get the number of Boids currently in the flock.
+
+        Returns
+        -------
+        int
+            Number of Boids currently in the flock.
+        """
         return len(self.boids)
 
     def initialise_random(
@@ -65,6 +118,21 @@ class Boids:
         xv_range=(0, 10.0),
         yv_range=(-20.0, 20.0),
     ):
+        """Set self.boids to a flock of Boid with random positions.
+
+        Parameters
+        ----------
+        boid_count : int
+            The number of Boid to generate.
+        x_range : tuple, optional
+            Min and max x position, by default (-450, 50.0)
+        y_range : tuple, optional
+            Min and max y position, by default (300.0, 600.0)
+        xv_range : tuple, optional
+            Min and max x velocity, by default (0, 10.0)
+        yv_range : tuple, optional
+            Min and max y velocity, by default (-20.0, 20.0)
+        """
         self.boids = [
             Boid(
                 random.uniform(*x_range),
@@ -77,9 +145,19 @@ class Boids:
         ]
 
     def initialise_from_data(self, data):
+        """Use input data to set self.boids.
+
+        Parameters
+        ----------
+        data : list
+            List of length 4 with positions and velocities for each Boid to create
+            (in [x, y, xv, yv order])
+        """
         self.boids = [Boid(x, y, xv, yv, self) for x, y, xv, yv in zip(*data)]
 
     def update(self):
+        """Update the velocities and positions of all the Boid in the flock
+        """
         # Compute boid velocity updates
         delta_vs = np.zeros((self.boid_count, 2))
         for i, me in enumerate(self.boids):
