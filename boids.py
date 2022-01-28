@@ -61,6 +61,17 @@ class Boid:
             delta_v += (other.velocity - self.velocity) * speed_matching_strength
 
         return delta_v
+    
+    def move(self, delta_v):
+        """Update the position and velocity of the Boid
+
+        Parameters
+        ----------
+        delta_v : np.array
+            Amount to update the x and y velocity
+        """
+        self.velocity += delta_v
+        self.position += self.velocity
 
 
 class Boids:
@@ -166,7 +177,4 @@ class Boids:
 
         # Apply updates
         for i, me in enumerate(self.boids):
-            # Update velocities
-            me.velocity += delta_vs[i, :]
-            # Move according to velocities
-            me.position += me.velocity
+            me.move(delta_vs[i, :])
