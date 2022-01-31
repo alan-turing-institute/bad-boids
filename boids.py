@@ -8,6 +8,27 @@ import numpy as np
 
 
 class Boid:
+    """
+    A single Boid that has an owner (a flock of Boids)
+
+    Attributes
+    ----------
+    position : np.ndarray
+        Length 2 array storing the Boid's x and y position
+    velocity : np.ndarray
+        Length 2 array storing the Boid's x and y velocity
+    owner : Boids
+        The flock of Boids this Boid belongs to
+
+    Methods
+    -------
+    interaction(other)
+        Compute the forces on this Boid due to one other Boid.
+
+    move(delta_v)
+        Increment the Boid's velocity and position.
+    """
+
     def __init__(self, x, y, xv, yv, owner):
         """Create a single Boid.
 
@@ -38,7 +59,7 @@ class Boid:
 
         Returns
         -------
-        np.array
+        np.ndarray
             Velocity change caused by the other Boid
         """
         delta_v = np.array([0.0, 0.0])
@@ -67,7 +88,7 @@ class Boid:
 
         Parameters
         ----------
-        delta_v : np.array
+        delta_v : np.ndarray
             Amount to update the x and y velocity
         """
         self.velocity += delta_v
@@ -75,6 +96,35 @@ class Boid:
 
 
 class Boids:
+    """
+    A flock of Boids governed by a set of interaction parameters.
+
+    Attributes
+    ----------
+    parameters : dict
+        Parameters controlling the flock behaviour, with keys 'flock_attraction',
+        'avoidance_radius', 'formation_flying_radius', and 'speed_matching_strength'
+    boids : list
+        List of Boid in this flock of Boids
+
+    boid_count : int
+        The number of Boid currently in the flock
+
+    Methods
+    -------
+    with_default_parameters(boid_count)
+        Create a Boids instance with default parameters for a given number of Boid.
+
+    initialise_random(boid_count, x_range, y_range, xv_range, yv_range)
+        Generate a number of Boid with random initial positions and velocities.
+
+    initialise_from_data(data)
+        Generate Boid from input data.
+
+    update()
+        Update the position and velocity of all the Boid
+    """
+
     def __init__(self, parameters):
         """Create an empty flock of Boids.
 
