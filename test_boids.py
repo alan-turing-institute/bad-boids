@@ -53,7 +53,7 @@ def test_bad_boids_initialisation_seed():
     flock1 = Flock.with_default_parameters(boid_count)
     flock1.initialise_random(boid_count, random_seed=random_seed)
     flock2 = Flock.with_default_parameters(boid_count)
-    flock2.initialise_random(boid_count, random_seed=1)
+    flock2.initialise_random(boid_count, random_seed=random_seed)
     for boid1, boid2 in zip(flock1.boids, flock2.boids):
         assert_array_equal(boid1.position, boid2.position)
         assert_array_equal(boid1.velocity, boid2.velocity)
