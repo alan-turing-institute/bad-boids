@@ -178,6 +178,7 @@ class Flock:
         y_range=(300.0, 600.0),
         xv_range=(0, 10.0),
         yv_range=(-20.0, 20.0),
+        random_seed=None,
     ):
         """Set self.boids to a number of Boid with random positions.
 
@@ -193,13 +194,16 @@ class Flock:
             Min and max x velocity, by default (0, 10.0)
         yv_range : tuple, optional
             Min and max y velocity, by default (-20.0, 20.0)
+        random_seed : int, float, str, bytes, or bytearray, optional
+            Random seed passed to random.Random()
         """
+        rng = random.Random(random_seed)
         self.boids = [
             Boid(
-                random.uniform(*x_range),
-                random.uniform(*y_range),
-                random.uniform(*xv_range),
-                random.uniform(*yv_range),
+                rng.uniform(*x_range),
+                rng.uniform(*y_range),
+                rng.uniform(*xv_range),
+                rng.uniform(*yv_range),
                 self,
             )
             for _ in range(boid_count)

@@ -47,6 +47,18 @@ def test_bad_boids_initialisation():
         assert boid.velocity[1] > yv_range[0]
 
 
+def test_bad_boids_initialisation_seed():
+    boid_count = 15
+    random_seed = 789
+    flock1 = Flock.with_default_parameters(boid_count)
+    flock1.initialise_random(boid_count, random_seed=random_seed)
+    flock2 = Flock.with_default_parameters(boid_count)
+    flock2.initialise_random(boid_count, random_seed=1)
+    for boid1, boid2 in zip(flock1.boids, flock2.boids):
+        assert_array_equal(boid1.position, boid2.position)
+        assert_array_equal(boid1.velocity, boid2.velocity)
+
+
 def test_boid_interaction_fly_to_middle():
     parameters = {
         "flock_attraction": 3,
