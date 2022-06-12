@@ -2,9 +2,51 @@
 A deliberately bad implementation of [Boids](http://dl.acm.org/citation.cfm?doid=37401.37406)
 for use as an exercise on refactoring.
 """
-
+import numpy as np
 import random
-import yaml
+class Boid():
+    def __init__(self, x,y,vx,vy, owner):
+        self.position = np.array([x,y])
+        self.velocity = np.array([vx, vy])
+        self.owner = owner
+
+    def interact(self, other):
+        """Compute velocity changes due to one other boid"""
+        
+        delta_v = np.array([0.0, 0.0])
+        separation = other.position - self.position
+        separation_square = separation.dot(separation)
+
+        # Fly towards the middle
+        delta_v += separation * self.owner.parameters["flock_attraction"]
+
+        # Fly away from nearby boids
+        if separation_square < self.owener.parameters["avoidance_radius"]**2:
+            delta_v -= separation
+        
+        # Try to match speed with nearby boids
+        if separation_square < self.owner.parameters["formation_flying_radius"]**2:
+            delta_v += (other.velocity - self.velocity) * self.owner.parameters["speed_matching_strength"]
+        return delta_v
+
+    def move(self, delta_v):
+        """Update the position and velocity of the Boid"""
+        self.velocity += delta_v
+        self.position += self.velocity
+    
+
+class Flock():
+    def __init__(self, parameters):
+        self.parameters = parameters
+        self.boids = []
+
+    def __len__(self):
+        return len(self.boids)
+    
+    # Ownership of Boids
+    # Adjust velocity: match speed, fly to center, fly away from others
+    # Init flock
+
 
 # Deliberately terrible code for teaching purposes
 def initialize_boids():
