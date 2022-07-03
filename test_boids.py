@@ -1,7 +1,8 @@
 import os
 import yaml
 from nose.tools import assert_almost_equal, assert_equal, assert_greater, assert_less
-from boids import Flock
+from numpy.testing import assert_array_equal
+from boids import Boid, Flock
 
 
 def test_bad_boids_regression():
@@ -51,3 +52,54 @@ def test_bad_boids_initialization():
         assert_greater(boid.velocity[0], xv_range[0])
         assert_less(boid.velocity[1], yv_range[1])
         assert_greater(boid.velocity[1], yv_range[0])
+
+
+def test_bad_boids_initialization_seed():
+    boid_count = 15
+    random_seed = 789
+    flock1 = Flock.with_default_parameters(boid_count)
+    flock1.initialize_random(boid_count, random_seed=random_seed)
+    flock2 = Flock.with_default_parameters(boid_count)
+    flock2.initialize_random(boid_count, random_seed=random_seed)
+    for boid1, boid2 in zip(flock1.boids, flock2.boids):
+        assert_array_equal(boid1.position, boid2.position)
+        assert_array_equal(boid1.velocity, boid2.velocity)
+
+
+def test_boid_interaction_fly_to_middle():
+    parameters = {
+        "flock_attraction": 3,
+        "avoidance_radius": 2,
+        "formation_flying_radius": 10,
+        "speed_matching_strength": 0,
+    }
+    flock = Flock(parameters)
+    first = Boid(0, 0, 1, 0, flock)
+    second = Boid(0, 5, 0, 0, flock)
+    assert_array_equal(first.interaction(second), [0.0, 15.0])
+
+
+def test_boid_interaction_avoidance():
+    parameters = {
+        "flock_attraction": 3,
+        "avoidance_radius": 10,
+        "formation_flying_radius": 10,
+        "speed_matching_strength": 0,
+    }
+    flock = Flock(parameters)
+    first = Boid(0, 0, 1, 0, flock)
+    second = Boid(0, 5, 0, 0, flock)
+    assert_array_equal(first.interaction(second), [0.0, 10.0])
+
+
+def test_boid_interaction_formation():
+    parameters = {
+        "flock_attraction": 3,
+        "avoidance_radius": 2,
+        "formation_flying_radius": 10,
+        "speed_matching_strength": 7,
+    }
+    flock = Flock(parameters)
+    first = Boid(0, 0, 0.0, 0, flock)
+    second = Boid(0, 5, 11.0, 0, flock)
+    assert_array_equal(first.interaction(second), [11.0 * 7.0, 15.0])
