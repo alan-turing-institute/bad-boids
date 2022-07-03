@@ -1,8 +1,28 @@
-A deliberately bad implementation of [Boids](http://dl.acm.org/citation.cfm?doid=37401.37406)
-for use as an exercise on refactoring.
+# Better boids
+Refactoring exercise of the Research Software Engineering Course of the Allan Turing Institute. Original version before refactoring is [here](https://github.com/jack89roberts/bad-boids/tree/main).
+## Setup
 
-To see an improved implementation see the [better_boids](https://github.com/jack89roberts/bad-boids/tree/better_boids) branch.
+Clone the repo, then install the requirements (from the `better-boids` directory):
+```
+pip install -r requirements.txt
+```
+Tested on Python 3.9. We recommend installing the requirements in a virtual environment of your choice.
 
-Adapted from:
-- https://github.com/UCL/bad-boids
-- https://github.com/jamespjh/bad-boids
+## Usage
+
+To view a Boids animation run (from the `better-boids` directory):
+
+```
+python animate_boids.py
+```
+
+## Development
+
+We use `black` and `flake8` to check the code style, and `pytest` for testing. To lint and test the code run (from the `better-boids` directory):
+
+```
+black .
+flake8
+pytest
+```
+

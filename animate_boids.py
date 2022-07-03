@@ -1,6 +1,6 @@
 from matplotlib import pyplot as plt
 from matplotlib import animation
-from boids import Boid, Flock
+from boids import Flock
 
 
 def view_boids(flock, xlim=(-500, 1500), ylim=(-500, 1500), frames=50, interval=50):
