@@ -1,6 +1,8 @@
 """
 Display a Boids animation
 """
+import argparse
+
 from matplotlib import animation  # type: ignore
 from matplotlib import pyplot as plt  # type: ignore
 
@@ -50,8 +52,10 @@ def view_boids(
     plt.show()
 
 
-if __name__ == "__main__":
-    boid_count = 50
-    flock = Flock.with_default_parameters(boid_count)
-    flock.initialise_random(boid_count)
+def main():
+    parser = argparse.ArgumentParser(description="Display a boids simulation")
+    parser.add_argument("boid_count", help="How many boids to simulate", type=int)
+    args = parser.parse_args()
+    flock = Flock.with_default_parameters(args.boid_count)
+    flock.initialise_random(args.boid_count)
     view_boids(flock)

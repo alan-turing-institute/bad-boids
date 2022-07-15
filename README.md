@@ -12,23 +12,42 @@ Adapted from:
 
 ## Setup
 
-Clone the repo, then install the requirements (from the `bad-boids` directory):
+Requires Python 3.9+.
+
+Clone the repo, checkout the `better_boids` branch, then install with `pip`:
 
 ```bash
-pip install -r requirements.txt
+git clone https://github.com/alan-turing-institute/bad-boids.git
+cd bad-boids
+git checkout better_boids
+pip install .
 ```
-
-Tested on Python 3.9. We recommend installing the requirements in a virtual environment of your choice.
 
 ## Usage
 
-To view a Boids animation run (from the `bad-boids` directory):
+To view a Boids animation run:
 
 ```bash
-python view_boids.py
+boids 50
 ```
 
+where `50` is the number of boids to simulate.
+
 ## Development
+
+### Poetry
+
+We use [Poetry](https://python-poetry.org/) for development and managing dependencies. After installing poetry, set up a `boids` development environment by running:
+
+```bash
+poetry install
+```
+
+from the `bad-boids` directory (checked out to the `better_boids` branch as in the setup instructions above). Then spawn a shell in the virtual environment and run commands there:
+
+```bash
+poetry shell
+```
 
 ### Code quality checks
 

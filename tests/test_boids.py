@@ -1,8 +1,8 @@
 import os
 
 import yaml
-from pytest import approx
 from numpy.testing import assert_array_equal
+from pytest import approx
 
 from boids import Boid, Flock
 
@@ -35,7 +35,6 @@ def test_bad_boids_initialisation():
         xv_range=xv_range,
         yv_range=yv_range,
     )
-
     assert len(flock.boids) == boid_count
     assert flock.boid_count == boid_count
     for boid in flock.boids:
