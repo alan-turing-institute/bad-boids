@@ -30,12 +30,35 @@ python view_boids.py
 
 ## Development
 
-We use `black`, `isort` and `flake8` to check the code style, `mypy` for type checking, and `pytest` for testing. To run all checks run the following from the `bad-boids` directory:
+### Code quality checks
+
+We use `black`, `isort` and `flake8` to check the code style, and `mypy` for type checking. To run all checks run the following from the `bad-boids` directory:
 
 ```bash
 isort .
 black .
 flake8
 mypy .
+```
+
+Alternatively, we have provided a [pre-commit](https://pre-commit.com/) config that will run all these automatically when making git commits. To install the hooks run:
+
+```bash
+pre-commit install --install-hooks
+```
+
+Then to manually run all checks on all files run:
+
+```bash
+pre-commit run -a
+```
+
+### Testing
+
+We use `pytest`, to run all tests simply run 
+
+```bash
 pytest
 ```
+
+from the `bad-boids` directory.

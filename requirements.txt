@@ -4,6 +4,7 @@ isort==5.10.1
 matplotlib==3.4.3
 mypy==0.961
 numpy==1.21.1
+pre-commit==2.20.0
 pytest==6.2.5
 PyYAML==6.0
 types-PyYAML==6.0.10
