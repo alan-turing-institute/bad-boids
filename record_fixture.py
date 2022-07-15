@@ -1,9 +1,11 @@
 import yaml
 
-from boids import Flock
+from boids import Boid, Flock
 
 
-def boids_to_coords(boids):
+def boids_to_coords(
+    boids: list[Boid],
+) -> tuple[list[float], list[float], list[float], list[float]]:
     """Convert a list of Boid into lists of coordinates
 
     Parameters
@@ -26,7 +28,7 @@ def boids_to_coords(boids):
     )
 
 
-def record_fixture(boid_count=50, random_seed=123):
+def record_fixture(boid_count: int = 50, random_seed: int = 123):
     """Save a yaml of Boid coordinates before and after an update to use in a
     regression test.
 

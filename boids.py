@@ -4,8 +4,10 @@ An improved implementation of Boids[1] for use as an exercise on refactoring.
 [1] http://dl.acm.org/citation.cfm?doid=37401.37406
 """
 import random
+from typing import Union
 
 import numpy as np
+import numpy.typing as npt
 
 
 class Boid:
@@ -30,7 +32,7 @@ class Boid:
         Increment the Boid's velocity and position.
     """
 
-    def __init__(self, x, y, xv, yv, owner):
+    def __init__(self, x: float, y: float, xv: float, yv: float, owner: "Flock"):
         """Create a single Boid.
 
         Parameters
@@ -46,11 +48,11 @@ class Boid:
         owner : Flock
             The Flock this Boid belongs to
         """
-        self.position = np.array([x, y])
-        self.velocity = np.array([xv, yv])
+        self.position: npt.NDArray[np.float64] = np.array([x, y])
+        self.velocity: npt.NDArray[np.float64] = np.array([xv, yv])
         self.owner = owner
 
-    def interaction(self, other):
+    def interaction(self, other: "Boid") -> npt.NDArray[np.float64]:
         """Compute the forces on this Boid due to one other Boid.
 
         Parameters
@@ -84,7 +86,7 @@ class Boid:
 
         return delta_v
 
-    def move(self, delta_v):
+    def move(self, delta_v: npt.NDArray[np.float64]):
         """Update the position and velocity of the Boid
 
         Parameters
@@ -126,7 +128,7 @@ class Flock:
         Update the position and velocity of all the Boid
     """
 
-    def __init__(self, parameters):
+    def __init__(self, parameters: dict[str, float]):
         """Create an empty Flock (with parameters but no Boid).
 
         Parameters
@@ -137,10 +139,10 @@ class Flock:
             and 'speed_matching_strength'
         """
         self.parameters = parameters
-        self.boids = []
+        self.boids: list[Boid] = []
 
     @classmethod
-    def with_default_parameters(cls, boid_count):
+    def with_default_parameters(cls, boid_count: int) -> "Flock":
         """Create an empty Flock with default parameters for a given flock size
 
         Parameters
@@ -162,7 +164,7 @@ class Flock:
         return cls(parameters)
 
     @property
-    def boid_count(self):
+    def boid_count(self) -> int:
         """Get the number of Boids currently in this Flock.
 
         Returns
@@ -174,12 +176,12 @@ class Flock:
 
     def initialise_random(
         self,
-        boid_count,
-        x_range=(-450, 50.0),
-        y_range=(300.0, 600.0),
-        xv_range=(0, 10.0),
-        yv_range=(-20.0, 20.0),
-        random_seed=None,
+        boid_count: int,
+        x_range: tuple[float, float] = (-450, 50.0),
+        y_range: tuple[float, float] = (300.0, 600.0),
+        xv_range: tuple[float, float] = (0, 10.0),
+        yv_range: tuple[float, float] = (-20.0, 20.0),
+        random_seed: Union[int, float, str, bytes, bytearray] = None,
     ):
         """Set self.boids to a number of Boid with random positions.
 
@@ -210,14 +212,14 @@ class Flock:
             for _ in range(boid_count)
         ]
 
-    def initialise_from_data(self, data):
+    def initialise_from_data(self, data: list[list[float]]):
         """Use input data to set self.boids.
 
         Parameters
         ----------
         data : list
             List of length 4 with positions and velocities for each Boid to create
-            (in [x, y, xv, yv order])
+            (in [x, y, xv, yv] order)
         """
         self.boids = [Boid(x, y, xv, yv, self) for x, y, xv, yv in zip(*data)]
 

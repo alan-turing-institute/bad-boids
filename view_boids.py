@@ -1,13 +1,19 @@
 """
 Display a Boids animation
 """
-from matplotlib import animation
-from matplotlib import pyplot as plt
+from matplotlib import animation  # type: ignore
+from matplotlib import pyplot as plt  # type: ignore
 
 from boids import Flock
 
 
-def view_boids(flock, xlim=(-500, 1500), ylim=(-500, 1500), frames=50, interval=50):
+def view_boids(
+    flock: Flock,
+    xlim: tuple[float, float] = (-500, 1500),
+    ylim: tuple[float, float] = (-500, 1500),
+    frames: int = 50,
+    interval: int = 50,
+):
     """Display an animation of a Flock of Boid
 
     Parameters
