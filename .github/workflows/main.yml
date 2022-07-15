@@ -19,6 +19,7 @@ jobs:
       - name: Check code style with black and flake8
         run: |
           black --check .
+          isort --check .
           flake8
       - name: Test with pytest
         run: pytest

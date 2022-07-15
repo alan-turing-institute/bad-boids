@@ -4,6 +4,7 @@ An improved implementation of Boids[1] for use as an exercise on refactoring.
 [1] http://dl.acm.org/citation.cfm?doid=37401.37406
 """
 import random
+
 import numpy as np
 
 
@@ -72,13 +73,13 @@ class Boid:
 
         # Fly away from nearby boids
         avoidance_radius = self.owner.parameters["avoidance_radius"]
-        if separation_sq < avoidance_radius ** 2:
+        if separation_sq < avoidance_radius**2:
             delta_v -= separation
 
         # Try to match speed with nearby boids
         formation_flying_radius = self.owner.parameters["formation_flying_radius"]
         speed_matching_strength = self.owner.parameters["speed_matching_strength"]
-        if separation_sq < formation_flying_radius ** 2:
+        if separation_sq < formation_flying_radius**2:
             delta_v += (other.velocity - self.velocity) * speed_matching_strength
 
         return delta_v
